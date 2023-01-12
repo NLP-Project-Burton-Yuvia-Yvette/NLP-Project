@@ -74,7 +74,7 @@ def lemmatize(string):
     return string
 
 
-def remove_stopwords(string, extra_words = [], exclude_words = []):
+def remove_stopwords(string, extra_words = ["'"], exclude_words = []):
     '''
     This function takes in a string, optional extra_words and exclude_words parameters
     with default empty lists and returns a string.
