@@ -112,10 +112,10 @@ def bar_common_language(train):
     ax = fig.add_axes([0,0,1,1])
     langs = ['Java', 'JavaScript', 'Python', 'TypeScript']
     language = [len(train[train.language == 'Java']), len(train[train.language == 'JavaScript']), len(train[train.language == 'Python']), len(train[train.language == 'TypeScript'])]
-    ax.bar(langs,language, color = 'red')
+    ax.bar(langs,language, color = 'blue')
     plt.xlabel("Language used")
     plt.ylabel(" ")
-    plt.title("What language is most commonly used in our dataset")
+    plt.title("Language most commonly used")
 
     plt.show()
     
@@ -125,15 +125,17 @@ def bar_average_word(train, JavaScript_freq, Java_freq, Python_freq, TypeScript_
     ax = fig.add_axes([0,0,1,1])
     langs = ['All','Java', 'JavaScript', 'Python', 'TypeScript']
     language = [all_freq.count()/len(train.language), Java_freq.count()/len(train[train.language == 'Java']), JavaScript_freq.count()/len(train[train.language == 'JavaScript']), Python_freq.count()/len(train[train.language == 'Python']), TypeScript_freq.count()/len(train[train.language == 'TypeScript'])]
-    ax.bar(langs,language, color = 'red')
+    ax.bar(langs,language, color = 'blue')
     plt.xlabel("Language used")
     plt.ylabel("Number of words")
-    plt.title("What is the average word count for each language?")
+    plt.title("Average word count")
 
     plt.show()
     
-def get_chi_language(train):
-    observed = pd.crosstab(train.clean_text, train.language)
-    chi2, p, degf, expected = stats.chi2_contingency(observed)
-    print(f'chi^2 = {chi2:.4f}')
-    print(f'p     = {p:.4f}')
+def location_ttest(train):
+    overall_mean = all_freq.count()/len(train.language)
+    alpha = 0.05
+    loc_cluster_one = Java_freq.count()/len(train[train.language == 'Java'])
+    t, p = stats.ttest_1samp(loc_cluster_one, overall_mean)
+    return t, p
+    print(f'Test Statistic: {t.round(2)}, P-Value: {p.round(2)}')
