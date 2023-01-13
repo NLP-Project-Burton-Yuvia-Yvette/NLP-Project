@@ -131,11 +131,3 @@ def bar_average_word(train, JavaScript_freq, Java_freq, Python_freq, TypeScript_
     plt.title("Average word count")
 
     plt.show()
-    
-def location_ttest(train):
-    overall_mean = all_freq.count()/len(train.language)
-    alpha = 0.05
-    loc_cluster_one = Java_freq.count()/len(train[train.language == 'Java'])
-    t, p = stats.ttest_1samp(loc_cluster_one, overall_mean)
-    return t, p
-    print(f'Test Statistic: {t.round(2)}, P-Value: {p.round(2)}')
