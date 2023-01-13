@@ -8,8 +8,24 @@ import requests
 
 
 import nltk.sentiment
+
+from bs4 import BeautifulSoup
+import time
+import os
+import numpy as np
 import matplotlib.pyplot as plt
-import seaborn as sns
+import json
+from typing import Dict, List, Optional, Union, cast
+import requests
+from env import github_token, github_username
+import prepare as p
+from nltk.tokenize.toktok import ToktokTokenizer
+from nltk.corpus import stopwords
+from sklearn.model_selection import train_test_split
+from scipy import stats
+import acquire
+
+
 
 def get_sentiment(sentiment_df):
     
@@ -69,3 +85,55 @@ def get_sentiment(sentiment_df):
     
     return plt.show();
     
+def number_words(train):
+    JavaScript_words = ' '.join(train[train.language == 'JavaScript'].clean_text)
+    Java_words = ' '.join(train[train.language == 'Java'].clean_text)
+    Python_words = ' '.join(train[train.language == 'Python'].clean_text)
+    TypeScript_words = ' '.join(train[train.language == 'TypeScript'].clean_text)
+    all_words = ' '.join(train.clean_text)
+    return JavaScript_words, Java_words, Python_words, TypeScript_words, all_words
+
+def frequency_of_words(JavaScript_words, Java_words, Python_words, TypeScript_words, all_words):
+    JavaScript_freq1 = pd.Series(JavaScript_words).value_counts()
+    Java_freq1 = pd.Series(Java_words).value_counts()
+    Python_freq1 = pd.Series(Python_words).value_counts()
+    TypeScript_freq1 = pd.Series(TypeScript_words).value_counts()
+    all_freq1 = pd.Series(all_words).value_counts()
+    JavaScript_freq = pd.Series(str(JavaScript_freq1).split(' '))
+    Java_freq = pd.Series(str(Java_freq1).split(' '))
+    Python_freq = pd.Series(str(Python_freq1).split(' '))
+    TypeScript_freq = pd.Series(str(TypeScript_freq1).split(' '))
+    all_freq = pd.Series(str(all_freq1).split(' '))
+    return JavaScript_freq, Java_freq, Python_freq, TypeScript_freq, all_freq
+
+    
+def bar_common_language(train):
+    fig = plt.figure(figsize = (10, 5))
+    ax = fig.add_axes([0,0,1,1])
+    langs = ['Java', 'JavaScript', 'Python', 'TypeScript']
+    language = [len(train[train.language == 'Java']), len(train[train.language == 'JavaScript']), len(train[train.language == 'Python']), len(train[train.language == 'TypeScript'])]
+    ax.bar(langs,language, color = 'red')
+    plt.xlabel("Language used")
+    plt.ylabel(" ")
+    plt.title("What language is most commonly used in our dataset")
+
+    plt.show()
+    
+    
+def bar_average_word(train, JavaScript_freq, Java_freq, Python_freq, TypeScript_freq, all_freq):
+    fig = plt.figure(figsize = (10, 5))
+    ax = fig.add_axes([0,0,1,1])
+    langs = ['All','Java', 'JavaScript', 'Python', 'TypeScript']
+    language = [all_freq.count()/len(train.language), Java_freq.count()/len(train[train.language == 'Java']), JavaScript_freq.count()/len(train[train.language == 'JavaScript']), Python_freq.count()/len(train[train.language == 'Python']), TypeScript_freq.count()/len(train[train.language == 'TypeScript'])]
+    ax.bar(langs,language, color = 'red')
+    plt.xlabel("Language used")
+    plt.ylabel("Number of words")
+    plt.title("What is the average word count for each language?")
+
+    plt.show()
+    
+def get_chi_language(train):
+    observed = pd.crosstab(train.clean_text, train.language)
+    chi2, p, degf, expected = stats.chi2_contingency(observed)
+    print(f'chi^2 = {chi2:.4f}')
+    print(f'p     = {p:.4f}')
