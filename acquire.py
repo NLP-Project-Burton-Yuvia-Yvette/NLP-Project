@@ -10,7 +10,7 @@ import os
 import json
 from typing import Dict, List, Optional, Union, cast
 import requests
-
+import pandas as pd
 from env import github_token, github_username
 
 # TODO: Make a github personal access token.
@@ -20,11 +20,21 @@ from env import github_token, github_username
 # TODO: Add your github username to your env.py file under the variable `github_username`
 # TODO: Add more repositories to the `REPOS` list below.
 
-REPOS = [
-    "gocodeup/codeup-setup-script",
-    "gocodeup/movies-application",
-    "torvalds/linux",
-]
+def get_urls():    
+    # create data frame for scrapped urls
+    urls_repo = pd.read_csv('urls_final.csv', index_col=0)
+    # drop duplicates 
+    urls_repo.drop_duplicates(inplace=True)
+    # drop 404 repositories
+    urls_repo.drop([534], axis = 0, inplace= True)
+    # reset index
+    urls_repo.reset_index(inplace=True)
+    urls_repo.drop(columns=['index'], inplace=True)
+    return urls_repo
+
+urls_repo = get_urls()
+
+REPOS = [urls_repo['0']]
 
 headers = {"Authorization": f"token {github_token}", "User-Agent": github_username}
 
