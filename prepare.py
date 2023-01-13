@@ -11,6 +11,7 @@ import acquire
 from time import strftime
 import numpy as np
 import warnings
+from sklearn.model_selection import train_test_split
 warnings.filterwarnings('ignore')
 
 
@@ -93,3 +94,48 @@ def remove_stopwords(string, extra_words = ["'"], exclude_words = []):
     string_without_stopwords = ' '.join(filtered_words)
     # return the document back
     return string_without_stopwords
+
+def data_prep(df):
+    '''
+    data_prep function takes in a dataframe and drops all null values and removes untargetted languages and resets indes
+    returns dataframe
+    '''
+    df.dropna(inplace=True)
+    df = df[(df.language == 'Java') | (df.language=='JavaScript') | (df.language=='Python') | (df.language=='TypeScript')]
+    df.reset_index(drop =True, inplace=True)
+    return df
+
+def text_prep(df):
+    '''
+    text_prep funciton takes in a dataframe and applies preps text for exploration and modeling
+    returns dataframe
+    '''
+    df['clean_text']= df.readme_contents.apply(basic_clean)
+    df['clean_text']= df.clean_text.apply(tokenize)
+    df['clean_text']= df.clean_text.apply(lemmatize)
+    df['clean_text']= df.clean_text.apply(remove_stopwords)
+    
+    return df
+
+def split_data(df, target):
+    '''
+    split_date takes in a dataframe  and target variable and splits into train , validate, test 
+    and stratifies on target variable
+    
+    The split is 20% test 80% train/validate. Then 30% of 80% validate and 70% of 80% train.
+    Aproximately (train 56%, validate 24%, test 20%)
+    
+    returns train, validate, and test 
+    '''
+    # split test data from train/validate
+    train_validate, test = train_test_split(df, test_size=.2, 
+                                        random_state=123, 
+                                        stratify=df[target])
+
+    # split train from validate
+    train, validate = train_test_split(train_validate, test_size=.3, 
+                                   random_state=123, 
+                                   stratify=train_validate[target])
+
+                                   
+    return train, validate, test
