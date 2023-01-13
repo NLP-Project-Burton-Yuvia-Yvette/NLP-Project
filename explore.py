@@ -6,7 +6,7 @@ import unicodedata
 import re
 import requests
 
-
+from wordcloud import WordCloud
 import nltk.sentiment
 
 from bs4 import BeautifulSoup
@@ -65,24 +65,13 @@ def get_sentiment(sentiment_df):
     
     df_output = pd.merge(sentiment_df, t_df_cleaned, on='row_id', how='inner')
     
-    
-    plt.subplot(1, 2, 1)
-    sns.kdeplot(df_output[df_output.language == 'JavaScript'].sentiment_score, label = 'JavaScript')
-    sns.kdeplot(df_output[df_output.language == "Python"].sentiment_score, label = 'Python')
-    sns.kdeplot(df_output[df_output.language == "Java"].sentiment_score, label = 'Java')
-    sns.kdeplot(df_output[df_output.language == "TypeScript"].sentiment_score, label = 'TypeScript')
-
-    plt.legend(['JavaScript', 'Python','Java','TypeScript'])
-    
-    
     #generate mean of sentiment_score by period
-    plt.subplot(1, 2, 2)
+  
     dfg = df_output.groupby(['language'])['sentiment_score'].mean()
     #create a bar plot
     dfg.plot(kind='bar', title='Sentiment Score', ylabel='Mean Sentiment Score',
          xlabel='Period', figsize=(6, 5))
    
-    
     return plt.show();
     
 def number_words(train):
@@ -131,3 +120,49 @@ def bar_average_word(train, JavaScript_freq, Java_freq, Python_freq, TypeScript_
     plt.title("Average word count")
 
     plt.show()
+
+    ###################### word cloud ###################################
+def create_subgroups (train):    
+    javaScript_words = ' '.join(train[train.language == 'JavaScript'].clean_text).split(' ')
+    java_words = ' '.join(train[train.language == 'Java'].clean_text).split(' ')
+    python_words = ' '.join(train[train.language == 'Python'].clean_text).split(' ')
+    typeScript_words = ' '.join(train[train.language == 'TypeScript'].clean_text).split(' ')
+    all_words = ' '.join(train.clean_text).split(' ')
+    return javaScript_words, java_words, python_words, typeScript_words, all_words
+
+
+def get_frequency(javaScript_words, java_words, python_words, typeScript_words, all_words ):
+    JavaScript_freq = pd.Series(javaScript_words).value_counts()
+    Java_freq = pd.Series(java_words).value_counts()
+    Python_freq = pd.Series(python_words).value_counts()
+    TypeScript_freq = pd.Series(typeScript_words).value_counts()
+    All_words_freq = pd.Series(all_words).value_counts()
+    return JavaScript_freq,Java_freq,Python_freq, TypeScript_freq, All_words_freq
+
+def create_wordcounts(JavaScript_freq,Java_freq,Python_freq, TypeScript_freq, All_words_freq ):
+    word_counts = (pd.concat([JavaScript_freq, Java_freq, Python_freq, TypeScript_freq, All_words_freq], axis=1, sort=True)
+                .set_axis(['JavaScript', 'Java', 'Python', 'TypeScript', 'AllWords'], axis=1, inplace=False)
+                .fillna(0)
+                .apply(lambda s: s.astype(int)))
+    word_counts['raw_count'] = word_counts.AllWords
+    word_counts['frequency'] = word_counts.raw_count / word_counts.raw_count.sum()
+    word_counts['augmented_frequency'] = word_counts.frequency / word_counts.frequency.max()
+    return word_counts
+
+
+
+def get_wordcloud(word_counts):
+    
+    # prepare words for wordcloud
+    top_words_cloud = word_counts.sort_values(by='AllWords', ascending=False).head(50)
+    top_words_cloud= top_words_cloud.index.to_list()
+    top_words_cloud = " ".join(top_words_cloud)
+
+
+
+    img = WordCloud(background_color='white',colormap='Accent').generate(top_words_cloud)
+    # WordCloud() produces an image object, which can be displayed with plt.imshow
+    plt.imshow(img)
+    # axis aren't very useful for a word cloud
+    plt.axis('off')
+    return plt.show()
