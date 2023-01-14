@@ -35,7 +35,7 @@ def cv_countvectorizer(X_train):
 
     
 
-def get_tree(x_train, y_train, x_validate, y_validate, x_test, y_test,cv):
+def get_tree(x_train, y_train, x_validate, y_validate,cv):
     '''
     Function gets Decision Tree model accuracy on train and validate data set 
     ''' 
@@ -51,9 +51,12 @@ def get_tree(x_train, y_train, x_validate, y_validate, x_test, y_test,cv):
     X_bow_val = cv.transform(x_validate)
     val_score =tree.score(X_bow_val, y_validate)
 
-    return train_score, val_score
+    print('Accuracy of Decision Tree classifier model on train set: {:.2f}'.format(train_score)) 
+    print('Accuracy of Decision Tree model on validate set: {:.2f}'.format(val_score)) 
+
+    #return train_score, val_score
     
-def get_forest(x_train, y_train, x_validate, y_validate, x_test, y_test,cv):
+def get_forest(x_train, y_train, x_validate, y_validate,cv):
     '''
     Function gets Random Forest model accuracy on train and validate data set 
     ''' 
@@ -68,10 +71,11 @@ def get_forest(x_train, y_train, x_validate, y_validate, x_test, y_test,cv):
     # fit model on validate data
     X_bow_val = cv.transform(x_validate)
     val_score =rf.score(X_bow_val, y_validate)
-    
-    return train_score, val_score
+    print('Accuracy of Random Forest classifier model on train set: {:.2f}'.format(train_score)) 
+    print('Accuracy of Random Forest model on validate set: {:.2f}'.format(val_score)) 
+   # return train_score, val_score
 
-def get_knn(x_train, y_train, x_validate, y_validate, x_test, y_test,cv):
+def get_knn(x_train, y_train, x_validate, y_validate,cv):
     '''
     Function gets KNN model accuracy on train and validate data set 
     ''' 
@@ -84,18 +88,21 @@ def get_knn(x_train, y_train, x_validate, y_validate, x_test, y_test,cv):
     # fit model on validate data
     X_bow_val = cv.transform(x_validate)
     val_score =knn.score(X_bow_val, y_validate)
-    
-    return train_score, val_score
+    print('Accuracy of KNN classifier model on train set: {:.2f}'.format(train_score)) 
+    print('Accuracy of KNN classifier model on validate set: {:.2f}'.format(val_score)) 
+
+    #return train_score, val_score
 
 
 ###################################################
 ################## Evaluate Models ################
 ###################################################
-models = ['DecisionTree_Train', 'DecisionTree_Validate', 'RandomForest_Train', 'RandomForest_Validate', 'KNN_Train', 'KNN_Validate']
+
 def make_stats_df():
     '''
     Function creates empty dataframe for results of models for evaluation.
     '''
+    models = ['DecisionTree_Train', 'DecisionTree_Validate', 'RandomForest_Train', 'RandomForest_Validate', 'KNN_Train', 'KNN_Validate']
     evaluate_df = pd.DataFrame()
     evaluate_df['Models'] = models
     return evaluate_df
@@ -106,18 +113,18 @@ def final_eval(DecisionTree_Train, DecisionTree_Validate, RandomForest_Train, Ra
     '''
     scores = [DecisionTree_Train, DecisionTree_Validate, RandomForest_Train, RandomForest_Validate, KNN_Train, KNN_Validate]
     evaluate_df['Scores']=scores
-    
+
     return evaluate_df
 ###################################################
 ################## Model on Test ##################
 ###################################################
 
-def get_tree_test(x_train, y_train, x_validate, y_validate, x_test, y_test,cv):
+def get_test(x_train, y_train, x_validate, y_validate, x_test, y_test,cv):
     '''
     Function gets Decision Tree model accuracy on train and validate data set 
     ''' 
     # create decision tree model using defaults and random state to replicate results
-    tree = DecisionTreeClassifier(max_depth=3)
+    tree = DecisionTreeClassifier(max_depth=3,random_state=123)
 
     # fit model on training data
     X_bow = cv.fit_transform(x_train)
@@ -131,7 +138,15 @@ def get_tree_test(x_train, y_train, x_validate, y_validate, x_test, y_test,cv):
     # fit model on test data
     X_bow_test = cv.transform(x_test)
     test_score =tree.score(X_bow_test, y_test)
+    
+    data_set = ['Train', 'Validate','Test']
+    evaluate_df = pd.DataFrame()
+    evaluate_df['Data_Set'] = data_set
+    
 
-    #return train_score, val_score, test_score
-    print('Accuracy of Decision Tree classifier model on test set: {:.2f}'
-      .format(tree.score(X_bow_test, y_test)))
+    scores = [train_score, val_score, test_score]
+    evaluate_df['Scores']=scores
+
+    print('Accuracy of Decision Tree classifier model on test set: {:.2f}'.format(test_score))
+    
+    return evaluate_df
