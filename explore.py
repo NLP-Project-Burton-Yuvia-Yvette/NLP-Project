@@ -166,3 +166,40 @@ def get_wordcloud(word_counts):
     # axis aren't very useful for a word cloud
     plt.axis('off')
     return plt.show()
+
+##################################### top 20 words #################################
+def get_graph(python_words, javaScript_words):
+    
+    top_20_Python_bigrams = (pd.Series(nltk.ngrams(python_words, 2))
+                          .value_counts()
+                          .head(20))
+
+    top_20_Python_bigrams.head()
+
+    top_20_Python_bigrams.sort_values(ascending=False).plot.barh(colormap='Accent', width=.9, figsize=(10, 6))
+
+    plt.title('20 Most frequently occuring Python bigrams')
+    plt.ylabel('')
+    plt.xlabel('# Word Count')
+
+    # make the labels pretty
+    ticks, _ = plt.yticks()
+    labels = top_20_Python_bigrams.reset_index()['index'].apply(lambda t: t[0] + ' ' + t[1])
+    _ = plt.yticks(ticks, labels)
+    plt.show()
+
+
+    top_20_JavaScript_bigrams = (pd.Series(nltk.ngrams(javaScript_words, 2))
+                          .value_counts()
+                          .head(20))
+    top_20_JavaScript_bigrams.sort_values(ascending=False).plot.barh(colormap='Accent', width=.9, figsize=(10, 6))
+
+    plt.title('20 Most frequently occuring JavaScript bigrams')
+    plt.ylabel('')
+    plt.xlabel('# Word Count')
+
+    # make the labels pretty
+    ticks, _ = plt.yticks()
+    labels = top_20_JavaScript_bigrams.reset_index()['index'].apply(lambda t: t[0] + ' ' + t[1])
+    _ = plt.yticks(ticks, labels)
+    plt.show()
