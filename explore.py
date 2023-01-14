@@ -168,7 +168,7 @@ def get_wordcloud(word_counts):
     return plt.show()
 
 ##################################### top 20 words #################################
-def get_graph(python_words, javaScript_words):
+def get_bigrams_graphs(python_words, javaScript_words):
     
     top_20_Python_bigrams = (pd.Series(nltk.ngrams(python_words, 2))
                           .value_counts()
@@ -203,3 +203,10 @@ def get_graph(python_words, javaScript_words):
     labels = top_20_JavaScript_bigrams.reset_index()['index'].apply(lambda t: t[0] + ' ' + t[1])
     _ = plt.yticks(ticks, labels)
     plt.show()
+
+def get_bigrams(words, n):
+    top_20_bigrams = (pd.Series(nltk.ngrams(words, n))
+                    .value_counts()
+                    .head(20))
+    return top_20_bigrams
+
