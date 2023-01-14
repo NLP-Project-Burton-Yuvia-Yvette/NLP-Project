@@ -54,7 +54,7 @@ def get_tree(x_train, y_train, x_validate, y_validate,cv):
     print('Accuracy of Decision Tree classifier model on train set: {:.2f}'.format(train_score)) 
     print('Accuracy of Decision Tree classifier model on validate set: {:.2f}'.format(val_score)) 
 
-    #return train_score, val_score
+    return train_score, val_score
     
 def get_forest(x_train, y_train, x_validate, y_validate,cv):
     '''
@@ -73,7 +73,7 @@ def get_forest(x_train, y_train, x_validate, y_validate,cv):
     val_score =rf.score(X_bow_val, y_validate)
     print('Accuracy of Random Forest classifier model on train set: {:.2f}'.format(train_score)) 
     print('Accuracy of Random Forest classifier model on validate set: {:.2f}'.format(val_score)) 
-   # return train_score, val_score
+    return train_score, val_score
 
 def get_knn(x_train, y_train, x_validate, y_validate,cv):
     '''
@@ -91,7 +91,7 @@ def get_knn(x_train, y_train, x_validate, y_validate,cv):
     print('Accuracy of KNN classifier model on train set: {:.2f}'.format(train_score)) 
     print('Accuracy of KNN classifier model on validate set: {:.2f}'.format(val_score)) 
 
-    #return train_score, val_score
+    return train_score, val_score
 
 
 ###################################################
