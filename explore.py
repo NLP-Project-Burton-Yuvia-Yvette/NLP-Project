@@ -25,8 +25,14 @@ from sklearn.model_selection import train_test_split
 from scipy import stats
 import acquire
 
+from IPython.display import display, HTML
+css = """
+.output {flex-direction: row;}
+"""
+HTML('<style>{}</style>'.format(css))
 
 
+####################################### sentiment graph ############################
 def get_sentiment(sentiment_df):
     
     # reindex dataframe
@@ -71,9 +77,10 @@ def get_sentiment(sentiment_df):
     #create a bar plot
     dfg.plot(kind='bar', title='Sentiment Score', ylabel='Mean Sentiment Score',
          xlabel='Period', figsize=(6, 5))
+    plt.show()
    
-    return plt.show();
-    
+    return df_output;
+   ########################################### bar graphs ############################ 
 def number_words(train):
     JavaScript_words = ' '.join(train[train.language == 'JavaScript'].clean_text)
     Java_words = ' '.join(train[train.language == 'Java'].clean_text)
@@ -101,9 +108,9 @@ def bar_common_language(train):
     ax = fig.add_axes([0,0,1,1])
     langs = ['Java', 'JavaScript', 'Python', 'TypeScript']
     language = [len(train[train.language == 'Java']), len(train[train.language == 'JavaScript']), len(train[train.language == 'Python']), len(train[train.language == 'TypeScript'])]
-    ax.bar(langs,language, color = 'blue')
-    plt.xlabel("Language used")
-    plt.ylabel(" ")
+    ax.bar(langs,language , color=['#beaed4','#f0027f','#7fc97f','#fdc086'])
+    plt.xlabel("")
+    plt.ylabel("Repo Count")
     plt.title("Language most commonly used")
 
     plt.show()
@@ -210,3 +217,34 @@ def get_bigrams(words, n):
                     .head(20))
     return top_20_bigrams
 
+################################# unique words in python and javascript#######################
+def get_unique_words(word_counts):
+    unique_df = pd.concat([word_counts[word_counts.JavaScript == 0].sort_values(by='Python').tail(10),
+           word_counts[word_counts.Python == 0].sort_values(by='JavaScript').tail(10)])
+    unique_javascript_words =pd.DataFrame(unique_df.JavaScript.tail(10))
+    unique_python_words =pd.DataFrame(unique_df.Python.head(10))
+    return display(unique_python_words), display(unique_javascript_words)
+
+####################################### stats ################################################
+def get_stats_ttest(df):
+    java_sem = df[df.language == 'Java']
+    javaScript_sem =df[df.language == 'JavaScript']
+    stat, pval =stats.levene( java_sem.sentiment_score, javaScript_sem.sentiment_score)
+    alpha = 0.05
+    if pval < alpha:
+        variance = False
+
+    else:
+        variance = True
+        
+    t_stat, p_val = stats.ttest_ind( java_sem.sentiment_score,javaScript_sem.sentiment_score,
+                                    equal_var=True,random_state=123)
+
+    
+    print (f't_stat= {t_stat}, p_value= {p_val/2}')
+    print ('-----------------------------------------------------------')
+    
+    if (p_val/2) < alpha:
+        print (f'We reject the null Hypothesis')
+    else:
+        print (f'We fail to reject the null Hypothesis.')
