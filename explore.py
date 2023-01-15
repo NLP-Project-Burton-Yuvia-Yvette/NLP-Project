@@ -33,6 +33,7 @@ HTML('<style>{}</style>'.format(css))
 
 
 ####################################### sentiment graph ############################
+
 def get_sentiment(sentiment_df):
     
     # reindex dataframe
@@ -76,7 +77,9 @@ def get_sentiment(sentiment_df):
     dfg = df_output.groupby(['language'])['sentiment_score'].mean()
     #create a bar plot
     dfg.plot(kind='bar', title='Sentiment Score', ylabel='Mean Sentiment Score',
-         xlabel='Period', figsize=(6, 5))
+         xlabel='',fontsize =20,color=['#beaed4','#f0027f','#7fc97f','#fdc086'])
+    plt.xticks(fontsize=20)
+    plt.yticks(fontsize=22)
     plt.show()
    
     return df_output;
@@ -110,8 +113,10 @@ def bar_common_language(train):
     language = [len(train[train.language == 'Java']), len(train[train.language == 'JavaScript']), len(train[train.language == 'Python']), len(train[train.language == 'TypeScript'])]
     ax.bar(langs,language , color=['#beaed4','#f0027f','#7fc97f','#fdc086'])
     plt.xlabel("")
-    plt.ylabel("Repo Count")
-    plt.title("Language most commonly used")
+    plt.ylabel("Repo Count",fontsize = 20)
+    plt.title("Language most commonly used",fontsize = 30)
+    plt.xticks(fontsize=20)
+    plt.yticks(fontsize=22)
 
     plt.show()
     
@@ -121,12 +126,14 @@ def bar_average_word(train, JavaScript_freq, Java_freq, Python_freq, TypeScript_
     ax = fig.add_axes([0,0,1,1])
     langs = ['All','Java', 'JavaScript', 'Python', 'TypeScript']
     language = [all_freq.count()/len(train.language), Java_freq.count()/len(train[train.language == 'Java']), JavaScript_freq.count()/len(train[train.language == 'JavaScript']), Python_freq.count()/len(train[train.language == 'Python']), TypeScript_freq.count()/len(train[train.language == 'TypeScript'])]
-    ax.bar(langs,language, color = 'blue')
-    plt.xlabel("Language used")
-    plt.ylabel("Number of words")
-    plt.title("Average word count")
-
+    ax.bar(langs,language, color=['#386cb0','#beaed4','#f0027f','#7fc97f','#fdc086'])
+    plt.xlabel("")
+    plt.ylabel("Number of words",fontsize =20)
+    plt.title("Average word count",fontsize =30)
+    plt.xticks(fontsize=20)
+    plt.yticks(fontsize=22)
     plt.show()
+
 
     ###################### word cloud ###################################
 def create_subgroups (train):    
