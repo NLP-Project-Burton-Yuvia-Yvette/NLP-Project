@@ -13,7 +13,7 @@ from bs4 import BeautifulSoup
 import time
 import os
 import numpy as np
-import matplotlib.pyplot as plt
+
 import json
 from typing import Dict, List, Optional, Union, cast
 import requests
@@ -26,10 +26,6 @@ from scipy import stats
 import acquire
 
 from IPython.display import display, HTML
-css = """
-.output {flex-direction: row;}
-"""
-HTML('<style>{}</style>'.format(css))
 
 
 ####################################### sentiment graph ############################
@@ -189,8 +185,9 @@ def get_wordcloud(word_counts):
     return plt.show()
 
 ##################################### top 20 words #################################
+
 def get_bigrams_graphs(python_words, javaScript_words):
-    '''Function returns vizual of bigrams for Python and JavaScript'''
+    
     top_20_Python_bigrams = (pd.Series(nltk.ngrams(python_words, 2))
                           .value_counts()
                           .head(20))
@@ -199,14 +196,16 @@ def get_bigrams_graphs(python_words, javaScript_words):
 
     top_20_Python_bigrams.sort_values(ascending=False).plot.barh(colormap='Accent', width=.9, figsize=(10, 6))
 
-    plt.title('20 Most frequently occuring Python bigrams')
+    plt.title('20 Most frequently occuring Python bigrams',fontsize =30)
     plt.ylabel('')
-    plt.xlabel('# Word Count')
+    plt.xlabel('Word Count')
 
-    # make the labels pretty
+    # make the labels 
     ticks, _ = plt.yticks()
     labels = top_20_Python_bigrams.reset_index()['index'].apply(lambda t: t[0] + ' ' + t[1])
     _ = plt.yticks(ticks, labels)
+    plt.xticks(fontsize=20)
+    plt.yticks(fontsize=18)
     plt.show()
 
 
@@ -215,14 +214,16 @@ def get_bigrams_graphs(python_words, javaScript_words):
                           .head(20))
     top_20_JavaScript_bigrams.sort_values(ascending=False).plot.barh(colormap='Accent', width=.9, figsize=(10, 6))
 
-    plt.title('20 Most frequently occuring JavaScript bigrams')
+    plt.title('20 Most frequently occuring JavaScript bigrams',fontsize =30)
     plt.ylabel('')
-    plt.xlabel('# Word Count')
+    plt.xlabel('Word Count')
 
-    # make the labels pretty
+    # make the labels 
     ticks, _ = plt.yticks()
     labels = top_20_JavaScript_bigrams.reset_index()['index'].apply(lambda t: t[0] + ' ' + t[1])
     _ = plt.yticks(ticks, labels)
+    plt.xticks(fontsize=20)
+    plt.yticks(fontsize=18)
     plt.show()
 
 def get_bigrams(words, n):
