@@ -35,7 +35,7 @@ HTML('<style>{}</style>'.format(css))
 ####################################### sentiment graph ############################
 
 def get_sentiment(sentiment_df):
-    
+    '''Function calculates sentiment score and creates dataframe of scores'''
     # reindex dataframe
     sentiment_df.reset_index(drop =True, inplace=True)
     #create sntiment object
@@ -85,6 +85,7 @@ def get_sentiment(sentiment_df):
     return df_output;
    ########################################### bar graphs ############################ 
 def number_words(train):
+    '''Function returns number of words per each programming language'''
     JavaScript_words = ' '.join(train[train.language == 'JavaScript'].clean_text)
     Java_words = ' '.join(train[train.language == 'Java'].clean_text)
     Python_words = ' '.join(train[train.language == 'Python'].clean_text)
@@ -93,6 +94,7 @@ def number_words(train):
     return JavaScript_words, Java_words, Python_words, TypeScript_words, all_words
 
 def frequency_of_words(JavaScript_words, Java_words, Python_words, TypeScript_words, all_words):
+    '''Function returns frequency of words per each programming language'''
     JavaScript_freq1 = pd.Series(JavaScript_words).value_counts()
     Java_freq1 = pd.Series(Java_words).value_counts()
     Python_freq1 = pd.Series(Python_words).value_counts()
@@ -107,6 +109,7 @@ def frequency_of_words(JavaScript_words, Java_words, Python_words, TypeScript_wo
 
     
 def bar_common_language(train):
+    '''Function returns bar graph of programming languages to show most commonly used'''
     fig = plt.figure(figsize = (10, 5))
     ax = fig.add_axes([0,0,1,1])
     langs = ['Java', 'JavaScript', 'Python', 'TypeScript']
@@ -122,6 +125,7 @@ def bar_common_language(train):
     
     
 def bar_average_word(train, JavaScript_freq, Java_freq, Python_freq, TypeScript_freq, all_freq):
+    '''Function returns bar graph of programming languages to show averages of words used'''
     fig = plt.figure(figsize = (10, 5))
     ax = fig.add_axes([0,0,1,1])
     langs = ['All','Java', 'JavaScript', 'Python', 'TypeScript']
@@ -136,7 +140,8 @@ def bar_average_word(train, JavaScript_freq, Java_freq, Python_freq, TypeScript_
 
 
     ###################### word cloud ###################################
-def create_subgroups (train):    
+def create_subgroups (train):
+    '''Function returns subgroups of words to be used in wordcloud vizual'''    
     javaScript_words = ' '.join(train[train.language == 'JavaScript'].clean_text).split(' ')
     java_words = ' '.join(train[train.language == 'Java'].clean_text).split(' ')
     python_words = ' '.join(train[train.language == 'Python'].clean_text).split(' ')
@@ -146,6 +151,7 @@ def create_subgroups (train):
 
 
 def get_frequency(javaScript_words, java_words, python_words, typeScript_words, all_words ):
+    '''Function returns value counts of programming languages of words used'''
     JavaScript_freq = pd.Series(javaScript_words).value_counts()
     Java_freq = pd.Series(java_words).value_counts()
     Python_freq = pd.Series(python_words).value_counts()
@@ -154,6 +160,7 @@ def get_frequency(javaScript_words, java_words, python_words, typeScript_words, 
     return JavaScript_freq,Java_freq,Python_freq, TypeScript_freq, All_words_freq
 
 def create_wordcounts(JavaScript_freq,Java_freq,Python_freq, TypeScript_freq, All_words_freq ):
+    '''Function returns counts of programming languages of words used and places them in data frame'''
     word_counts = (pd.concat([JavaScript_freq, Java_freq, Python_freq, TypeScript_freq, All_words_freq], axis=1, sort=True)
                 .set_axis(['JavaScript', 'Java', 'Python', 'TypeScript', 'AllWords'], axis=1, inplace=False)
                 .fillna(0)
@@ -166,7 +173,7 @@ def create_wordcounts(JavaScript_freq,Java_freq,Python_freq, TypeScript_freq, Al
 
 
 def get_wordcloud(word_counts):
-    
+    '''Function returns vizual word cloud based on word counts dataframe'''
     # prepare words for wordcloud
     top_words_cloud = word_counts.sort_values(by='AllWords', ascending=False).head(50)
     top_words_cloud= top_words_cloud.index.to_list()
@@ -183,7 +190,7 @@ def get_wordcloud(word_counts):
 
 ##################################### top 20 words #################################
 def get_bigrams_graphs(python_words, javaScript_words):
-    
+    '''Function returns vizual of bigrams for Python and JavaScript'''
     top_20_Python_bigrams = (pd.Series(nltk.ngrams(python_words, 2))
                           .value_counts()
                           .head(20))
@@ -219,6 +226,7 @@ def get_bigrams_graphs(python_words, javaScript_words):
     plt.show()
 
 def get_bigrams(words, n):
+    '''Function returns bigrams for Python and JavaScript'''
     top_20_bigrams = (pd.Series(nltk.ngrams(words, n))
                     .value_counts()
                     .head(20))
@@ -226,6 +234,7 @@ def get_bigrams(words, n):
 
 ################################# unique words in python and javascript#######################
 def get_unique_words(word_counts):
+    '''Function returns vizual data frames of unique wordsfor Python and JavaScript'''
     unique_df = pd.concat([word_counts[word_counts.JavaScript == 0].sort_values(by='Python').tail(10),
            word_counts[word_counts.Python == 0].sort_values(by='JavaScript').tail(10)])
     unique_javascript_words =pd.DataFrame(unique_df.JavaScript.tail(10))
@@ -234,6 +243,7 @@ def get_unique_words(word_counts):
 
 ####################################### stats ################################################
 def get_stats_ttest(df):
+    '''Function returns statistical T test'''
     java_sem = df[df.language == 'Java']
     javaScript_sem =df[df.language == 'JavaScript']
     stat, pval =stats.levene( java_sem.sentiment_score, javaScript_sem.sentiment_score)

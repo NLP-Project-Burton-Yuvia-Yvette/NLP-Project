@@ -20,7 +20,8 @@ from env import github_token, github_username
 # TODO: Add your github username to your env.py file under the variable `github_username`
 # TODO: Add more repositories to the `REPOS` list below.
 
-def get_urls():    
+def get_urls():
+    """Function creates data frame of urls"""   
     # create data frame for scrapped urls
     urls_repo = pd.read_csv('urls_final.csv', index_col=0)
     # drop duplicates 
