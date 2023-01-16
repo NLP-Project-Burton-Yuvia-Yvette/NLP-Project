@@ -1,7 +1,8 @@
 # CodeUp-DS-NLP-Project
  
 ### Project Goals 
-* The goal of this classification project is to first identify key words of the programming language and create a machine learning model that can effectly predict the programming language used.
+* The goal of this classification project is to first identify key words of the programming language and create a machine learning model that can effectively predict the primary language use of github repositories trending as "most starred".
+
 ### The Plan
 * Aquire ReadMe data from GitHub repositories via webscraping.
 * Prepare data for exploration by:
@@ -27,7 +28,7 @@
 
 ### Steps to Reproduce
 * Clone this repo.
-* Acquire the data from GitHub
+* Acquire the data from GitHub using acquire.py file
 * Put the data in the file containing the cloned repo.
 * Run notebook
 ### Conclusions
@@ -38,7 +39,9 @@
         * 0.671052 on test data samples
         
 #### Key TakeAway:
-    Decision Tree model was successful on all train, validate and test data sets. 
+* Acquire data using BeautifulSoup to create a usable data frame from extracted text and primary language used within each ReadMe.
+* Exploration revealed JavaScript is most common language, Java word count is much lower, JavaScript has best sentiment score, most common word is yes.
+* Decision Tree model was successful on all train, validate and test data sets and had an accuracy score of 67% on test data. The final model beat the baseline of 45% by 22% in terms of accuracy score.
 ### Recommendations
 
    * Consider aquiring larger "text" datasets
