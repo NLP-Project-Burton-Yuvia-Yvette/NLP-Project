@@ -266,3 +266,6 @@ def get_stats_ttest(df):
         print (f'We reject the null Hypothesis')
     else:
         print (f'We fail to reject the null Hypothesis.')
+
+
+
